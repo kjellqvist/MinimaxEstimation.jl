@@ -12,6 +12,7 @@ julia = "1.5"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Hypatia = "b99e6be6-89ff-11e8-14f8-45c827f4f8f2"
 
 [targets]
-test = ["Test"]
+test = ["Test", "Hypatia"]
