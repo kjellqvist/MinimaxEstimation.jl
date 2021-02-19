@@ -15,7 +15,7 @@
         H = [1 0]
         P₀ = I(2)
         Q = 10*I(2)
-        R = 0.7*I(2)
+        R = 0.7*I(1)
         kf = KalmanFilter(x₀, F, H, B, P₀, Q, R)
         @test typeof(kf.B) == Matrix{Float64}
         @test kf.pdy[] == 1
