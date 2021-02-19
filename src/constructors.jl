@@ -1,4 +1,3 @@
-# TODO: #4 Implement constructors
 function KalmanFilter(
     x::AbstractVector{T},
     F::AbstractMatrix{T},
@@ -14,15 +13,15 @@ function KalmanFilter(
     m = size(H)[1]
     p = size(B)[2]
     # Validate Args
-    size(F)[1] != n ? DimensionMismatch("Dimension mismatch of F") : nothing
-    size(H)[2] != n ? DimensionMismatch("Dimension mismatch of H") : nothing
-    size(B)[1] != n ? DimensionMismatch("Dimension mismatch of B") : nothing
-    size(P)[1] != n ? DimensionMismatch("P and F incompatible") : nothing
-    size(Q)[1] != n ? DimensionMismatch("Q and F incompatible") : nothing
-    size(R)[1] != n ? DimensionMismatch("R and F incompatible") : nothing
-    isposdef(P) ? DomainError("P must be positive-definite") : nothing
-    isposdef(Q) ? DomainError("Q must be positive-definite") : nothing
-    isposdef(R) ? DomainError("R must be positive-definite") : nothing
+    size(F)[1] != n ? DimensionMismatch("Dimension mismatch of F") |> throw : nothing
+    size(H)[2] != n ? DimensionMismatch("Dimension mismatch of H") |> throw : nothing
+    size(B)[1] != n ? DimensionMismatch("Dimension mismatch of B") |> throw : nothing
+    size(P)[1] != n ? DimensionMismatch("P and F incompatible") |> throw : nothing
+    size(Q)[1] != n ? DimensionMismatch("Q and F incompatible") |> throw : nothing
+    size(R)[1] != m ? DimensionMismatch("R and C incompatible") |> throw : nothing
+    !isposdef(P) ? DomainError("P must be positive-definite") |> throw : nothing
+    !isposdef(Q) ? DomainError("Q must be positive-definite") |> throw : nothing
+    !isposdef(R) ? DomainError("R must be positive-definite") |> throw : nothing
 
     c = Base.RefValue{T}(0)
     pdy = Base.RefValue{T}(1)
