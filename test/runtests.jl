@@ -1,4 +1,5 @@
 using MinimaxEstimation
+using Hypatia
 using Test
 
 @testset "MinimaxEstimation.jl" begin
