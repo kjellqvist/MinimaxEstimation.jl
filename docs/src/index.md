@@ -1,12 +1,11 @@
+
 ```@meta
 CurrentModule = MinimaxEstimation
 ```
 
 # MinimaxEstimation
-
+Supernice package
 ```@index
 ```
 
-```@autodocs
-Modules = [MinimaxEstimation]
-```
+

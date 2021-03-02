@@ -1,3 +1,21 @@
+@doc raw"""
+    kf = KalmanFilter(x, F, H, B, P, Q, R, offset)
+
+Create a KalmanFilter object.
+
+for the dynamical system 
+```math
+\begin{aligned}
+x_{t+1} & = Fx_t + Bu_t + w_t + \text{offset}\\
+y_t     & = Hx_t + v_t,
+\end{aligned}
+```
+where $x_t\in \mathbb{R}^n$ are the states, $u\in \mathbb{R}^p$ are known inputs
+ $y_t\in \mathbb{R}^m$ are measured outputs and 
+ $w_t\in \mathbb{R}^n,\ v_t \in \mathbb{R}^m$ are unknown, uncorrelated disturbances,
+ with positive definite covariance matrices $Q \in \mathbb{R}^{n\times n}$ and
+ $R \in \mathbb{R}^{m\times m}$ respectively. The offset is an $n$-dimensional constant.
+"""
 function KalmanFilter(
     x::AbstractVector{T},
     F::AbstractMatrix{T},
@@ -35,10 +53,6 @@ function KalmanFilter(
     offset = copy(offset)
     KalmanFilter{T}(x0, F, H, B, P, Q, R, offset, c, pdy)
 end
-
-
-
-
 
 # lazy wrappers
 function KalmanFilter(x0, F, H, P0, Q, R)
