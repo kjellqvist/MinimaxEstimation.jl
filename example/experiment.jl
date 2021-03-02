@@ -36,7 +36,6 @@ zhat_bayesian = zeros(n_steps+1)
 
 zhat_mini[1]= predict(mini, true)[1][1]
 zhat_bayesian[1] = predict(bayesian)[1]
-
 x = x0
 for k=1:n_steps
     update!(mini,y[k], u(k))
