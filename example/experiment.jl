@@ -12,14 +12,14 @@ F = [1.1 -.5 0.1
     0 1 0]
 B = [-1;2;3]
 H = [1 0 0]
-x = [0; 0; 0]
+x0 = [0; 0; 0]
 Q = I(3)
 R = 1
 P = I(3)
 gamma = 2
 
-kf1 = KalmanFilter(x, F, H,B, P, Q, R)
-kf2 = KalmanFilter(x, -F, H,B, P, Q, R)
+kf1 = KalmanFilter(x0, F, H,B, P, Q, R)
+kf2 = KalmanFilter(x0, -F, H,B, P, Q, R)
 mini = MinimaxMMAE(copy([kf1, kf2]), gamma, Mosek.Optimizer)
 bayesian = BayesianMMAE(copy([kf1, kf2]))
 v = randn((1,n_steps))
@@ -36,13 +36,15 @@ zhat_bayesian = zeros(n_steps+1)
 
 zhat_mini[1]= predict(mini, true)[1][1]
 zhat_bayesian[1] = predict(bayesian)[1]
+
+x = x0
 for k=1:n_steps
     update!(mini,y[k], u(k))
     update!(bayesian, y[k], u(k))
     
     zhat_mini[k+1] = predict(mini, true)[1][1]
     zhat_bayesian[k+1] = predict(bayesian)[1]
-    x = F*x + B*u(k) + w[:,k]
+    global x = F*x + B*u(k) + w[:,k]
     y[k+1] = (H*x)[1] + v[k]
     z[k+1] = (H*x)[1]
     k +=1
@@ -58,3 +60,5 @@ plot(
     markershape = :o,
     xlabel = "time-step",
     ylabel = "z")
+
+savefig("experiment.png")
