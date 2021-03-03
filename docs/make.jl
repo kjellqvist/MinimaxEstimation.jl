@@ -21,5 +21,6 @@ makedocs(;
 )
 
 deploydocs(;
+    devbranch = "main,
     repo="github.com/kjellqvist/MinimaxEstimation.jl",
 )
