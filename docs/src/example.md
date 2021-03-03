@@ -40,39 +40,39 @@ v = randn((1,n_steps))
 w = randn((3, n_steps))
 u(k) = sin(k/5)
 y = zeros(n_steps+1)
-z = zeros(n_steps+1)
+Hx = zeros(n_steps+1)
 y[1] = 0
-z[1] = 0
+Hx[1] = 0
 
-zhat_mini = zeros(n_steps+1)
+yhat_mini = zeros(n_steps+1)
 vals_mini = zeros(n_steps+1)
-zhat_bayesian = zeros(n_steps+1)
+yhat_bayesian = zeros(n_steps+1)
 
-zhat_mini[1]= predict(mini, false)[1][1]
-zhat_bayesian[1] = predict(bayesian)[1]
+yhat_mini[1]= predict(mini, false)[1][1]
+yhat_bayesian[1] = predict(bayesian)[1]
 x = x0
 for k=1:n_steps
     update!(mini,y[k], u(k))
     update!(bayesian, y[k], u(k))
     
-    zhat_mini[k+1] = predict(mini, false)[1][1]
-    zhat_bayesian[k+1] = predict(bayesian)[1]
+    yhat_mini[k+1] = predict(mini, false)[1][1]
+    yhat_bayesian[k+1] = predict(bayesian)[1]
     global x = F*x + B*u(k) + w[:,k]
     y[k+1] = (H*x)[1] + v[k]
-    z[k+1] = (H*x)[1]
+    Hx[k+1] = (H*x)[1]
     k +=1
 end
-print("||z - zhat_mini|| = ", norm(z - zhat_mini), "\n")
-print("||z - zhat_bayesian|| = ", norm(z - zhat_bayesian), "\n")
-print("||z_{n+1} - y_n|| = ", norm(z[2:end]-y[1:end-1]), "\n")
+print("||Hx - yhat_mini|| = ", norm(Hx - yhat_mini), "\n")
+print("||Hx - yhat_bayesian|| = ", norm(Hx - yhat_bayesian), "\n")
+print("||Hx_{n+1} - y_n|| = ", norm(Hx[2:end]-y[1:end-1]), "\n")
 plot(
-    [z zhat_mini zhat_bayesian], 
+    [Hx yhat_mini yhat_bayesian], 
     legend=:bottomright,
-    labels = ["z" "zhat_minimax" "zhat_bayesian"],
+    labels = ["Hx" "yhat_minimax" "yhat_bayesian"],
     linewidth=3,
     markershape = :o,
     xlabel = "time-step",
-    ylabel = "z")
+    ylabel = "Output")
 
 savefig("experiment.svg"); nothing # hide
 ```
