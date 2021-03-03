@@ -1,3 +1,7 @@
+"""
+Main module for `MinimaxEstimation.jl`
+
+"""
 module MinimaxEstimation
     using LinearAlgebra
     using JuMP

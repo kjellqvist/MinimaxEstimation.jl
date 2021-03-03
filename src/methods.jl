@@ -1,3 +1,43 @@
+@doc raw"""
+    update!(filter, y, u)
+
+Update the internal states of the filter in accordance with the output y
+and input u.
+
+# Methods
+    update!(filter::KalmanFilter, y, u)
+
+Update the internal states of the KalmanFilter in according to
+measured output $y$ and controlled input $u$.
+
+The internal states are updated as follows
+
+```math
+\begin{aligned}
+P_{t+1} & = Q + FP_{t}F^\top \quad - FP_{t}H^\top(R + HP_{t}H^\top)^{-1}H P_{t}F^\top \\
+\breve{x}_{t+1}   & = F \breve{x}_{t} + K_{t}(y_t - H\breve{x}_{t})\\
+K_{t}     & = FP_{t}H^\top(R + H P_{t} H^\top)^{-1} \\
+c_{t+1} & = |H_i\breve x_{t} -y_t|^2_{(R + HP_{t}H^\top)^{-1}} + c_{t} \\
+p(i|y_t) & = \frac{1}{(2\pi)^{n/2}\sqrt{|R + HP_tH^\top|}}e^{-1/2 (H\hat x_t - y_t)^\top (R + HP_tH^\top)^{-1}(Hx_t-y_t)}p(i|y_{t-1}).
+\end{aligned}
+```
+
+The cummulative costs $c_t$ are states used by Minimax Adaptive Estimators, and $p(i|y_t)$ are states used by the standard adaptive estimator.
+
+
+    update!(filter::MinimaxFilter, y, u)
+
+Update each filter in the internal filterbank of the minimaxfilter object.
+
+    update!(filter::BayesianFilter, y, u)
+
+Update each filter in the internal filterbank of the standard multiple model adaptive filter
+and normalize the probability of a given state being active conditioned on past measurements,
+$p(i, y_t)$.
+"""
+function update!(filter::AbstractFilter, y, u)
+end
+
 function update!(
     filter::KalmanFilter{T},
     y::AbstractVector{T},
@@ -49,6 +89,34 @@ function update!(
     end
 
     return nothing
+end
+
+@doc raw"""
+    predict(filter)
+
+Predict the states at the next time instance.
+
+# Methods
+
+    xhat = predict(filter::KalmanFilter)
+
+Get the kalman filter prediction of the state at the next time-step, $\hat x_{t+1}$.
+
+    yhat, val = predict(minimaxfilter)
+
+Predict the output of the next time-step as the minimizing argument of
+ the quadratically constrainde convex program
+```math
+J_N^\star(y)= \min_{\hat y} \max_i |\hat y - H_i\breve x_{N,i}|^2_{(I-\gamma^{-2}H_iP_{N,i}H_i^\top)^{-1}} - \gamma^2 c_{N,i}.
+```
+
+    yhat = predict(bayesianfilter)
+
+Predict the output at the next time-step as the expected value
+`` E[\hat y_{t+1}] = \sum_{i=1}^K \breve y_i p(i|y_t) ``, where $\breve y_i$ are the
+corresponding KalmanFilter estimates.
+"""
+function predict(filter::AbstractFilter)
 end
 
 function predict(filter::KalmanFilter)

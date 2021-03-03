@@ -13,6 +13,10 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Manual" => Any[
+            "Library" => "lib.md",
+            "Example" => "example.md"
+        ]
     ],
 )
 
