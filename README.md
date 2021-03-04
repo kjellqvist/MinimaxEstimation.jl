@@ -5,6 +5,7 @@
 [![Coverage](https://codecov.io/gh/kjellqvist/MinimaxEstimation.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/kjellqvist/MinimaxEstimation.jl)
 
 Accompanying Julia package for the article Minimax Adaptive Estimation of Finite Sets of Linear Systems.
+[https://arxiv.org/abs/2103.02479](https://arxiv.org/abs/2103.02479)
 The package can be installed by running
 ```
 using Pkg;
