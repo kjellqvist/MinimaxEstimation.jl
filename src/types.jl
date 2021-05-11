@@ -17,7 +17,6 @@ end
 
 struct MinimaxMMAE{T<:AbstractFloat} <: AbstractFilter{T}
     filterbank::AbstractVector{KalmanFilter{T}}
-    γ::Real
     optimizer::Function
     
     @doc raw"""
@@ -41,11 +40,9 @@ struct MinimaxMMAE{T<:AbstractFloat} <: AbstractFilter{T}
     Filterbank is an array of KalmanFilter object associated with each $i$.
     """
     function MinimaxMMAE(
-        filterbank::AbstractVector{KalmanFilter{T}}, 
-        γ::Real, 
+        filterbank::AbstractVector{KalmanFilter{T}},  
         optimizer::Function) where T<: AbstractFloat
-        γ <= 0 ? DomainError("γ must be positive") : nothing
-        new{T}(filterbank, γ, optimizer)
+        new{T}(filterbank, optimizer)
     end
 end
 

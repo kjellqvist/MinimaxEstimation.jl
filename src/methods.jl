@@ -123,10 +123,10 @@ function predict(filter::KalmanFilter)
     return copy(filter.x)
 end
 
-function predict(filter::MinimaxMMAE, silent = false)
+function predict(filter::MinimaxMMAE, γ::Real; silent = false)
+    γ <= 0 ? DomainError("γ must be positive") : nothing
     m = size(filter.filterbank[1].H)[1]
     K = length(filter.filterbank)
-    γ = filter.γ
 
     # Setting up optimization model
     model = Model(filter.optimizer)
@@ -146,6 +146,19 @@ function predict(filter::MinimaxMMAE, silent = false)
     yhat = value.(yhat)
     val = value(t)
     return yhat, val
+end
+
+function predict(filter::MinimaxMMAE; γmax = 100, silent = true)
+    γmin = sqrt(maximum([maximum(eigvals(kf.H*kf.P*kf.H')) for kf in filter.filterbank]))
+    γ = (γmin + γmax)/2
+    yhat = []
+    val = 0
+    for k = 1:20
+        yhat, val = predict(filter, γ, silent = silent)
+        val < 0 ? γmax = γ : γmin = γ
+        γ = (γmin + γmax)/2
+    end
+    return yhat, val, γ
 end
 
 function predict(filter::BayesianMMAE)

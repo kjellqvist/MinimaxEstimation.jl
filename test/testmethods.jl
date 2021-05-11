@@ -35,13 +35,13 @@
             K₀[:,:] = [3/5;0]
             x1 = F*x₀ + K₀*([y]-H*x₀)
             x2 = -F*x₀ + -K₀*([y]-H*x₀)
-            mini = MinimaxMMAE([kf1, kf2], γ, () ->  Hypatia.Optimizer())
+            mini = MinimaxMMAE([kf1, kf2], () ->  Hypatia.Optimizer())
             update!(mini, y)
             @test predict(mini.filterbank[1]) == x1
             @test predict(mini.filterbank[2]) == x2
             @test mini.filterbank[1].c[] == 1/5
            
-            yhatreal, valreal = predict(mini)
+            yhatreal, valreal = predict(mini, γ)
             P1exp = [26/5 -3; -3 4]
             valexp = x1'*H'*pinv(I - γ^(-2)*H*P1exp*H')*H*x1 - γ^2*kf1.c[]
             @test yhatreal[1] ≈ 0 atol=1e-12

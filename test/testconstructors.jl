@@ -48,8 +48,7 @@
         offset = [1.;1.]
         kf1 = KalmanFilter(x₀, F, H, B, P₀, Q, R, offset)   
         kf2 = KalmanFilter(x₀, -F, H, B, P₀, Q, R, offset)
-        γ=10
-        mini = MinimaxMMAE([kf1, kf2], γ, () ->  Hypatia.Optimizer())
+        mini = MinimaxMMAE([kf1, kf2], () ->  Hypatia.Optimizer())
         @test mini.filterbank[1].F == -mini.filterbank[2].F
         bayesian = BayesianMMAE([kf1, kf2])
         @test bayesian.filterbank[1].pdy[] == 1/2
