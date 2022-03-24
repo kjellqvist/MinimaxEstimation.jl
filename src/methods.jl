@@ -131,6 +131,7 @@ function predict(filter::MinimaxMMAE, γ::Real; silent = false)
     # Setting up optimization model
     model = Model(filter.optimizer)
     silent ? set_silent(model) : unset_silent(model)
+    set_silent(model)
     @variable(model, yhat[1:m])
     @variable(model, t)
     for f in filter.filterbank

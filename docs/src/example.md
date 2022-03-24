@@ -13,7 +13,7 @@ x_0     & = 0,
 where $i\in\{-1,1\},\ u_t = sin(t/5)$, $v_t$ and $w_t$ are unit intensity, uncorrelated, Gaussian white noise. Further, $Q = I,\ R = I,\ P_0 = I$. 
 
 ```@example Gammas
-using Hypatia
+using Ipopt
 using LinearAlgebra
 using MinimaxEstimation
 using Plots
@@ -31,7 +31,7 @@ x0 = 0
 kf1 = KalmanFilter(x0, F1, H, P0, Q, R)
 kf2 = KalmanFilter(x0, F2, H, P0, Q, R)
 #mini = MinimaxMMAE([kf1, kf2],Mosek.Optimizer)
-mini = MinimaxMMAE([kf1, kf2],() -> Hypatia.Optimizer())
+mini = MinimaxMMAE([kf1, kf2],() -> Ipopt.Optimizer())
 bayes = BayesianMMAE([kf1, kf2])
 v = randn((1, n_steps)) # Measurement noise
 w = randn((1, n_steps)) # Process disturbance
@@ -95,8 +95,7 @@ savefig("experiment.svg"); nothing # hide
 ![](experiment.svg)
 
 ```@example OptimizationProblem
-using Hypatia
-#using Mosek, MosekTools
+using Ipopt
 using LinearAlgebra
 using MinimaxEstimation
 using Plots
@@ -113,8 +112,7 @@ x0 = 0
 (Q, R, P0) = (1, 1, 1) # Norm
 kf1 = KalmanFilter(x0, F1, H, P0, Q, R)
 kf2 = KalmanFilter(x0, F2, H, P0, Q, R)
-#mini = MinimaxMMAE([kf1, kf2],Mosek.Optimizer)
-mini = MinimaxMMAE([kf1, kf2],() -> Hypatia.Optimizer())
+mini = MinimaxMMAE([kf1, kf2],() -> Ipopt.Optimizer())
 bayes = BayesianMMAE([kf1, kf2])
 v = randn((1, n_steps)) # Measurement noise
 w = randn((1, n_steps)) # Process disturbance

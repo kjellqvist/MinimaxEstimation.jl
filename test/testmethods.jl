@@ -35,7 +35,7 @@
             K₀[:,:] = [3/5;0]
             x1 = F*x₀ + K₀*([y]-H*x₀)
             x2 = -F*x₀ + -K₀*([y]-H*x₀)
-            mini = MinimaxMMAE([kf1, kf2], () ->  Hypatia.Optimizer())
+            mini = MinimaxMMAE([kf1, kf2], () ->  Ipopt.Optimizer())
             update!(mini, y)
             @test predict(mini.filterbank[1]) == x1
             @test predict(mini.filterbank[2]) == x2
