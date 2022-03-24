@@ -3,7 +3,7 @@
 x_{t+1} &amp; = \pm x_t + w_t \\
 y_t     &amp; = x_t + v_t \\
 x_0     &amp; = 0,
-\end{aligned}\]</p><p>where <span>$i\in\{-1,1\},\ u_t = sin(t/5)$</span>, <span>$v_t$</span> and <span>$w_t$</span> are unit intensity, uncorrelated, Gaussian white noise. Further, <span>$Q = I,\ R = I,\ P_0 = I$</span>. </p><pre><code class="language-julia">using Hypatia
+\end{aligned}\]</p><p>where <span>$i\in\{-1,1\},\ u_t = sin(t/5)$</span>, <span>$v_t$</span> and <span>$w_t$</span> are unit intensity, uncorrelated, Gaussian white noise. Further, <span>$Q = I,\ R = I,\ P_0 = I$</span>. </p><pre><code class="language-">using Ipopt
 using LinearAlgebra
 using MinimaxEstimation
 using Plots
@@ -21,13 +21,13 @@ x0 = 0
 kf1 = KalmanFilter(x0, F1, H, P0, Q, R)
 kf2 = KalmanFilter(x0, F2, H, P0, Q, R)
 #mini = MinimaxMMAE([kf1, kf2],Mosek.Optimizer)
-mini = MinimaxMMAE([kf1, kf2],() -&gt; Hypatia.Optimizer())
+mini = MinimaxMMAE([kf1, kf2],() -&gt; Ipopt.Optimizer())
 bayes = BayesianMMAE([kf1, kf2])
 v = randn((1, n_steps)) # Measurement noise
 w = randn((1, n_steps)) # Process disturbance
 y = zeros(n_steps+1)    # Noisy output
 z = zeros(n_steps+1)    # Hx -&gt; Noise-free output
-yhat1 = zeros(n_steps+1)   #
+yhat1 = zeros(n_steps+1)   # 
 yhat2 = zeros(n_steps+1)
 yhatmini = zeros(n_steps+1,1)
 yhatbayes = zeros(n_steps+1,1)
@@ -40,7 +40,7 @@ function bisectgamma(filter::BayesianMMAE; γmax::Real = 100)
     yhat = predict(filter)
     γmin = sqrt(maximum([maximum(eigvals(kf.H*kf.P*kf.H&#39;)) for kf in filter.filterbank]))
     γmax &lt; γmin ? error(DomainError((γmax, γmin), &quot;γmax smaller than γmin&quot;)) : nothing
-    γ = (γmin + γmax)/2
+    γ = (γmin + γmax)/2 
     for k = 1:20
         J(filter, yhat, γ) &lt; 0 ? γmax = γ : γmin = γ
         γ = (γmin + γmax)/2
@@ -60,7 +60,7 @@ end
 x = x0
 for k=1:n_steps
         # Updates all Kalman filters and calculates the conditional probabilities
-    update!(bayes, y[k])
+    update!(bayes, y[k])   
     yhat1[k+1] = predict(kf1)[1]
     yhat2[k+1] = predict(kf2)[1]
     γmins[k+1] = sqrt(maximum([maximum(eigvals(kf1.P)) maximum(eigvals(kf2.P))]))
@@ -78,52 +78,8 @@ plot(
     linewidth = 3,
     xlabel = &quot;N&quot;,
     ylabel = L&quot;\gamma_N^\star&quot;,
-    markershape = :o)</code></pre><pre class="documenter-example-output">trying combined without correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-trying combined without correction
-trying centering with correction
-/home/runner/.julia/packages/GR/9Vi4m/src/../deps/gr/bin/gksqt: error while loading shared libraries: libQt5Widgets.so.5: cannot open shared object file: No such file or directory
-connect: Connection refused
-GKS: can&#39;t connect to GKS socket application
-
-GKS: Open failed in routine OPEN_WS
-GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS</pre><p><img src="../experiment.svg" alt/></p><pre><code class="language-julia">using Hypatia
-#using Mosek, MosekTools
+    markershape = :o)
+savefig(&quot;experiment.svg&quot;); nothing # hide</code></pre><p><img src="experiment.svg" alt/></p><pre><code class="language-">using Ipopt
 using LinearAlgebra
 using MinimaxEstimation
 using Plots
@@ -140,14 +96,13 @@ x0 = 0
 (Q, R, P0) = (1, 1, 1) # Norm
 kf1 = KalmanFilter(x0, F1, H, P0, Q, R)
 kf2 = KalmanFilter(x0, F2, H, P0, Q, R)
-#mini = MinimaxMMAE([kf1, kf2],Mosek.Optimizer)
-mini = MinimaxMMAE([kf1, kf2],() -&gt; Hypatia.Optimizer())
+mini = MinimaxMMAE([kf1, kf2],() -&gt; Ipopt.Optimizer())
 bayes = BayesianMMAE([kf1, kf2])
 v = randn((1, n_steps)) # Measurement noise
 w = randn((1, n_steps)) # Process disturbance
 y = zeros(n_steps+1)    # Noisy output
 z = zeros(n_steps+1)    # Hx -&gt; Noise-free output
-yhat1 = zeros(n_steps+1)   #
+yhat1 = zeros(n_steps+1)   # 
 yhat2 = zeros(n_steps+1)
 yhatmini = zeros(n_steps+1,1)
 yhatbayes = zeros(n_steps+1,1)
@@ -160,7 +115,7 @@ function bisectgamma(filter::BayesianMMAE; γmax::Real = 100)
     yhat = predict(filter)
     γmin = sqrt(maximum([maximum(eigvals(kf.H*kf.P*kf.H&#39;)) for kf in filter.filterbank]))
     γmax &lt; γmin ? error(DomainError((γmax, γmin), &quot;γmax smaller than γmin&quot;)) : nothing
-    γ = (γmin + γmax)/2
+    γ = (γmin + γmax)/2 
     for k = 1:20
         J(filter, yhat, γ) &lt; 0 ? γmax = γ : γmin = γ
         γ = (γmin + γmax)/2
@@ -180,7 +135,7 @@ end
 x = x0
 for k=1:5
     # Updates all Kalman filters and calculates the conditional probabilities
-    update!(bayes, y[k])
+    update!(bayes, y[k])   
     yhat1[k+1] = predict(kf1)[1]
     yhat2[k+1] = predict(kf2)[1]
     global x = F*x + w[1,k]
@@ -204,9 +159,5 @@ plot!(plt, lower:0.01:upper, x -&gt; max(f1(x), f2(x)), linecolor = :black, line
 plot!(plt,yhatmini, [Jmini], marker = :o, markersize = 8, markercolor = :blue, labels = &quot;Minimax&quot;)
 plot!(plt,yhatbayes, [Jbayes], marker = :x, markersize = 8, markercolor = :green, labels = &quot;Bayes&quot;)
 xlabel!(L&quot;\hat y_5&quot;)
-ylabel!(L&quot;J_5&quot;)</code></pre><pre class="documenter-example-output">/home/runner/.julia/packages/GR/9Vi4m/src/../deps/gr/bin/gksqt: error while loading shared libraries: libQt5Widgets.so.5: cannot open shared object file: No such file or directory
-connect: Connection refused
-GKS: can&#39;t connect to GKS socket application
-
-GKS: Open failed in routine OPEN_WS
-GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS</pre><p><img src="../experiment_2.svg" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../lib/">« Library</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 24 March 2022 19:43">Thursday 24 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+ylabel!(L&quot;J_5&quot;)
+savefig(&quot;experiment_2.svg&quot;); nothing # hide</code></pre><p><img src="experiment_2.svg" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../lib/">« Library</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 24 March 2022 19:46">Thursday 24 March 2022</span>. Using Julia version 1.7.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
