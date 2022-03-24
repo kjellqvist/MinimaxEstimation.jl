@@ -17,7 +17,7 @@ end
 
 struct MinimaxMMAE{T<:AbstractFloat} <: AbstractFilter{T}
     filterbank::AbstractVector{KalmanFilter{T}}
-    optimizer::Function
+    optimizer
     
     @doc raw"""
         mini = MinimaxMMAE(filterbank, γ, optimizer)

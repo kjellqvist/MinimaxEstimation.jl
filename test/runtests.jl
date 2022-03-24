@@ -1,5 +1,5 @@
 using MinimaxEstimation
-using Hypatia
+using Ipopt
 using Test
 using LinearAlgebra
 
