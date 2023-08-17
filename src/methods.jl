@@ -102,7 +102,7 @@ Predict the states at the next time instance.
 
 Get the kalman filter prediction of the state at the next time-step, $\hat x_{t+1}$.
 
-    yhat, val = predict(minimaxfilter)
+    yhat, val = predict(minimaxfilter, γ)
 
 Predict the output of the next time-step as the minimizing argument of
  the quadratically constrainde convex program
