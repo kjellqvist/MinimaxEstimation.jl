@@ -20,7 +20,7 @@ struct MinimaxMMAE{T<:AbstractFloat} <: AbstractFilter{T}
     optimizer
     
     @doc raw"""
-        mini = MinimaxMMAE(filterbank, γ, optimizer)
+        mini = MinimaxMMAE(filterbank, optimizer)
     Construct a Minimax Multiple Model Adaptive Estimator object.
 
     Create an estimator for the case where the dynamics belong to 
